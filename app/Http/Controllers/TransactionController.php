@@ -17,21 +17,6 @@ class TransactionController extends Controller
         return view('transactions.create');
     }
 
-    /*
-    public function store(Request $request)
-    {
-        $request->validate([
-            'date' => 'required|date',
-            'amount' => 'required|numeric',
-            'type' => 'required|in:income,expense',
-            'description' => 'nullable|string',
-        ]);
-
-        Transaction::create($request->all());
-        return redirect()->route('transactions.index')->with('success', 'Transaction added successfully.');
-    }
-    */
-
     public function store(Request $request) {
     $request->validate([
         'date' => 'required|date',
@@ -69,21 +54,6 @@ class TransactionController extends Controller
         return view('transactions.edit', compact('transaction'));
     }
 
-    /*
-    public function update(Request $request, Transaction $transaction)
-    {
-        $request->validate([
-            'date' => 'required|date',
-            'amount' => 'required|numeric',
-            'type' => 'required|in:income,expense',
-            'description' => 'nullable|string',
-        ]);
-
-        $transaction->update($request->all());
-        return redirect()->route('transactions.index')->with('success', 'Transaction updated successfully.');
-    }
-    */
-
     public function update(Request $request, Transaction $transaction) {
         $request->validate([
             'date' => 'required|date',
@@ -113,15 +83,6 @@ class TransactionController extends Controller
 
         return redirect()->route('transactions.index')->with('success', 'Transaksi berhasil diperbarui.');
     }
-
-
-    /*
-    public function destroy(Transaction $transaction)
-    {
-        $transaction->delete();
-        return redirect()->route('transactions.index')->with('success', 'Transaction deleted successfully.');
-    }
-    */
 
     public function destroy(Transaction $transaction) {
         // Hapus transaksi

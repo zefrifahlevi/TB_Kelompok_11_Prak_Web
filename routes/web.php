@@ -13,17 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-/*Route::get('/', function () {
-    return view('welcome');
-});
-*/
-
-/*
-Route::get('/', function () {
-    return view('/welcome');
-});
-*/
-
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TransactionController;
 
@@ -32,15 +21,6 @@ Route::get('/', function () {
 });
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-
-/*
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware('auth');
-
-Route::resource('transactions', TransactionController)->middleware('auth');
-*/
-
 
 Route::get('/dashboard', [TransactionController::class, 'index'])->name('dashboard')->middleware('auth');
 Route::resource('transactions', TransactionController::class)->middleware('auth');
