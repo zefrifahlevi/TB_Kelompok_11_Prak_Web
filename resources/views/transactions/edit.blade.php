@@ -13,13 +13,17 @@
         <div class="mb-3">
             <label for="type" class="form-label">Jenis</label>
             <select name="type" id="type" class="form-control" required>
-                <option value="income" {{ $transaction->type === 'income' ? 'selected' : '' }}>Penerimaan</option>
+                <option value="income" {{ $transaction->type === 'income' ? 'selected' : '' }}>Pemasukan</option>
                 <option value="expense" {{ $transaction->type === 'expense' ? 'selected' : '' }}>Pengeluaran</option>
             </select>
         </div>
         <div class="mb-3">
             <label for="amount" class="form-label">Jumlah</label>
             <input type="number" name="amount" id="amount" class="form-control" value="{{ $transaction->amount }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="payer_name" class="form-label">Nama Pembayar</label>
+            <input type="text" name="payer_name" id="payer_name" class="form-control" value="{{ $transaction->payer_name }}">
         </div>
         <div class="mb-3">
             <label for="description" class="form-label">Deskripsi</label>

@@ -16,7 +16,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('transactions.index') }}">Transaksi</a>
+                        <a class="nav-link" href="{{ route('transactions.index') }}">Home</a>
                     </li>
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="POST" class="d-inline">
@@ -41,7 +41,9 @@
                         <th>Tanggal</th>
                         <th>Jenis</th>
                         <th>Jumlah</th>
+                        <th>Nama Pembayar</th> <!-- Kolom baru -->
                         <th>Deskripsi</th>
+                        <th>Saldo</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -50,9 +52,11 @@
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $transaction->date }}</td>
-                        <td>{{ $transaction->type === 'income' ? 'Penerimaan' : 'Pengeluaran' }}</td>
+                        <td>{{ $transaction->type === 'income' ? 'Pemasukan' : 'Pengeluaran' }}</td>
                         <td>Rp {{ number_format($transaction->amount, 2, ',', '.') }}</td>
+                        <td>{{ $transaction->payer_name }}</td> <!-- Data Nama Pembayar -->
                         <td>{{ $transaction->description }}</td>
+                        <td>Rp {{ number_format($transaction->balance, 2, ',', '.') }}</td> <!-- Tambahkan Saldo -->
                         <td>
                             <a href="{{ route('transactions.edit', $transaction->id) }}" class="btn btn-primary btn-sm">Edit</a>
                             <form action="{{ route('transactions.destroy', $transaction->id) }}" method="POST" style="display:inline;">

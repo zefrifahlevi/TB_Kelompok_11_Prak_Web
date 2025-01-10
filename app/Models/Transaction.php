@@ -14,5 +14,7 @@ class Transaction extends Model
         'type',
         'amount',
         'description',
+        'payer_name', // Tambahkan nama pembayar
+        'balance',    // Tambahkan saldo
     ];
 }

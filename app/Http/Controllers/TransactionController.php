@@ -17,6 +17,7 @@ class TransactionController extends Controller
         return view('transactions.create');
     }
 
+    /*
     public function store(Request $request)
     {
         $request->validate([
@@ -29,12 +30,46 @@ class TransactionController extends Controller
         Transaction::create($request->all());
         return redirect()->route('transactions.index')->with('success', 'Transaction added successfully.');
     }
+    */
+
+    public function store(Request $request) {
+    $request->validate([
+        'date' => 'required|date',
+        'amount' => 'required|numeric',
+        'type' => 'required|in:income,expense',
+        'description' => 'nullable|string',
+        'payer_name' => 'nullable|string',
+    ]);
+
+    // Hitung saldo terakhir
+        $lastTransaction = Transaction::orderBy('date', 'desc')->orderBy('id', 'desc')->first();
+        $currentBalance = $lastTransaction ? $lastTransaction->balance : 0;
+
+        // Perbarui saldo berdasarkan jenis transaksi
+        $newBalance = $request->type === 'income'
+            ? $currentBalance + $request->amount
+            : $currentBalance - $request->amount;
+
+        // Buat transaksi baru
+        Transaction::create([
+            'date' => $request->date,
+            'amount' => $request->amount,
+            'type' => $request->type,
+            'description' => $request->description,
+            'payer_name' => $request->payer_name,
+            'balance' => $newBalance,
+        ]);
+
+        return redirect()->route('transactions.index')->with('success', 'Transaksi berhasil ditambahkan.');
+    }
+
 
     public function edit(Transaction $transaction)
     {
         return view('transactions.edit', compact('transaction'));
     }
 
+    /*
     public function update(Request $request, Transaction $transaction)
     {
         $request->validate([
@@ -47,10 +82,64 @@ class TransactionController extends Controller
         $transaction->update($request->all());
         return redirect()->route('transactions.index')->with('success', 'Transaction updated successfully.');
     }
+    */
 
+    public function update(Request $request, Transaction $transaction) {
+        $request->validate([
+            'date' => 'required|date',
+            'amount' => 'required|numeric',
+            'type' => 'required|in:income,expense',
+            'description' => 'nullable|string',
+            'payer_name' => 'nullable|string',
+        ]);
+
+        // Hitung ulang saldo
+        $lastTransaction = Transaction::orderBy('date', 'desc')->orderBy('id', 'desc')->first();
+        $currentBalance = $lastTransaction ? $lastTransaction->balance : 0;
+
+        $newBalance = $request->type === 'income'
+            ? $currentBalance + $request->amount - $transaction->amount
+            : $currentBalance - $request->amount + $transaction->amount;
+
+        // Update transaksi
+        $transaction->update([
+            'date' => $request->date,
+            'amount' => $request->amount,
+            'type' => $request->type,
+            'description' => $request->description,
+            'payer_name' => $request->payer_name,
+            'balance' => $newBalance,
+        ]);
+
+        return redirect()->route('transactions.index')->with('success', 'Transaksi berhasil diperbarui.');
+    }
+
+
+    /*
     public function destroy(Transaction $transaction)
     {
         $transaction->delete();
         return redirect()->route('transactions.index')->with('success', 'Transaction deleted successfully.');
     }
+    */
+
+    public function destroy(Transaction $transaction) {
+        // Hapus transaksi
+        $transaction->delete();
+
+        // Perbarui saldo semua transaksi setelah transaksi yang dihapus
+        $transactions = Transaction::orderBy('date', 'asc')->orderBy('id', 'asc')->get();
+        $currentBalance = 0;
+
+        foreach ($transactions as $t) {
+            $currentBalance = $t->type === 'income'
+                ? $currentBalance + $t->amount
+                : $currentBalance - $t->amount;
+
+            $t->update(['balance' => $currentBalance]);
+        }
+
+        return redirect()->route('transactions.index')->with('success', 'Transaksi berhasil dihapus.');
+    }
+
 }

@@ -23,6 +23,10 @@
             <input type="number" class="form-control" id="amount" name="amount" required>
         </div>
         <div class="mb-3">
+            <label for="payer_name" class="form-label">Nama Pembayar</label>
+            <input type="text" class="form-control" id="payer_name" name="payer_name">
+        </div>
+        <div class="mb-3">
             <label for="description" class="form-label">Deskripsi</label>
             <textarea class="form-control" id="description" name="description" rows="3"></textarea>
         </div>
