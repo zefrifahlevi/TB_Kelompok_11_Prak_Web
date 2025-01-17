@@ -6,10 +6,18 @@ use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
-    public function index()
-    {
+    public function index() {
         $transactions = Transaction::orderBy('date', 'desc')->get();
-        return view('dashboard', compact('transactions'));
+
+        $currentBalance = $transactions->last()->balance ?? 0;
+        $totalIncome = $transactions->where('type', 'income')
+                                    ->whereBetween('date', [now()->startOfMonth(), now()->endOfMonth()])
+                                    ->sum('amount');
+        $totalExpense = $transactions->where('type', 'expense')
+                                    ->whereBetween('date', [now()->startOfMonth(), now()->endOfMonth()])
+                                    ->sum('amount');
+
+        return view('dashboard', compact('transactions', 'currentBalance', 'totalIncome', 'totalExpense'));
     }
 
     public function create()

@@ -33,30 +33,33 @@
         <p>Anda berhasil login. Gunakan navigasi untuk mengelola transaksi secara efektif.</p>
 
         <div class="mt-4">
-            <h3>Ringkasan Transaksi</h3>
+            <h3>Ringkasan Saldo</h3>
+            <p><strong>Saldo saat ini:</strong> Rp {{ number_format($currentBalance, 2, ',', '.') }}</p>
+            <p><strong>Total Pemasukan Bulan Ini:</strong> Rp {{ number_format($totalIncome, 2, ',', '.') }}</p>
+            <p><strong>Total Pengeluaran Bulan Ini:</strong> Rp {{ number_format($totalExpense, 2, ',', '.') }}</p>
+        </div>
+
+        <div class="mt-4">
+            <h3>Transaksi Pemasukan</h3>
             <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th>No</th>
                         <th>Tanggal</th>
-                        <th>Jenis</th>
                         <th>Jumlah</th>
-                        <th>Nama Pembayar</th> <!-- Kolom baru -->
+                        <th>Nama Pembayar</th>
                         <th>Deskripsi</th>
-                        <th>Saldo</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($transactions as $index => $transaction)
+                    @foreach($transactions->where('type', 'income') as $transaction)
                     <tr>
-                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $loop->iteration }}</td>
                         <td>{{ $transaction->date }}</td>
-                        <td>{{ $transaction->type === 'income' ? 'Pemasukan' : 'Pengeluaran' }}</td>
                         <td>Rp {{ number_format($transaction->amount, 2, ',', '.') }}</td>
-                        <td>{{ $transaction->payer_name }}</td> <!-- Data Nama Pembayar -->
+                        <td>{{ $transaction->payer_name }}</td>
                         <td>{{ $transaction->description }}</td>
-                        <td>Rp {{ number_format($transaction->balance, 2, ',', '.') }}</td> <!-- Tambahkan Saldo -->
                         <td>
                             <a href="{{ route('transactions.edit', $transaction->id) }}" class="btn btn-primary btn-sm">Edit</a>
                             <form action="{{ route('transactions.destroy', $transaction->id) }}" method="POST" style="display:inline;">
@@ -69,9 +72,48 @@
                     @endforeach
                 </tbody>
             </table>
+        </div>
+
+        <div class="mt-4">
+            <h3>Transaksi Pengeluaran</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Tanggal</th>
+                        <th>Jumlah</th>
+                        <th>Nama Pembayar</th>
+                        <th>Deskripsi</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($transactions->where('type', 'expense') as $transaction)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $transaction->date }}</td>
+                        <td>Rp {{ number_format($transaction->amount, 2, ',', '.') }}</td>
+                        <td>{{ $transaction->payer_name }}</td>
+                        <td>{{ $transaction->description }}</td>
+                        <td>
+                            <a href="{{ route('transactions.edit', $transaction->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                            <form action="{{ route('transactions.destroy', $transaction->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4">
             <a href="{{ route('transactions.create') }}" class="btn btn-success">Tambah Transaksi</a>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
